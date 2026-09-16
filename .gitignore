@@ -4,11 +4,9 @@ credentials.py
 *.properties
 
 *.vsidx
-Output\*.csv
-Output\DELETE\*.csv
-Output\INSERT\*.csv
-Output\UPDATE\*.csv
-Output\UPSERT\*.csv
+*.csv
+*.txt
+*.json
 **/Output/
 *.wsuo
 *.json
