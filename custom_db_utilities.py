@@ -15,6 +15,7 @@ from collections import OrderedDict
 import time
 import logging as log
 import coloredlogs
+import json
 # pandas and numpy
 import numpy as np
 import pandas as pd
@@ -396,6 +397,41 @@ class Salesforce_Utilities:
         except Exception as e:
             # log error when uploading dataframe of records to salesforce
             log.exception(f"[Error uploading dataframe of records to salesforce...{e}]")
+
+    def retrieve_object_metadata(self, sf, object, field_metadata_to_keep = None):
+        """
+        Description: Retreieve metadata for an object within salesforce.
+                     Retreieves all field metadata of specified object
+        Parameters:
+
+        sf                      - sf instance, logged in salesforce instance
+        object                  - string, Salesforce object name to retrieve field metadata for
+        field_metadata_to_keep  - list, list of field metadata values to retain and return back, if none, return all.
+                                  I know using "None" is grammatically counter intuitive but just roll with it.
+
+        Return:                 - pd.DataFrame, return json converted as pandas dataframe
+        """
+        # try except block
+        try:
+            # log status to console
+            log.info(f"[retrieving metadata for object : {object}]")
+            # make soap api call to pull object metadata
+            desc = getattr(sf, object).describe()
+            # convert metadata to json and load as Ordered Dict, retain only fields metadata
+            fields_dict = json.loads(json.dumps(desc['fields']))
+            # convert Ordered Dict to pandas dataframe
+            fields_df = pd.DataFrame(fields_dict)
+            # chekc if returning all fields or only a subset
+            if field_metadata_to_keep == None:
+                return fields_df
+            return fields_df[field_metadata_to_keep]
+
+
+        # exception block - error logging into salesforce
+        except Exception as e:
+            # log error when logging into salesforce
+            log.exception(f"[Error retrieving metadata for object : {object}...{e}]")
+
 
 class MSSQL_Utilities:
     def __init__(self):
