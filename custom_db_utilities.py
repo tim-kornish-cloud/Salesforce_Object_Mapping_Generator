@@ -2255,11 +2255,9 @@ class Custom_Utilities:
                 return df
             # retain order of original fields:
             original_fields = df.columns.tolist()
-            print(original_fields)
             # loop through list of fields to add
             for field in mapping_fields_to_add:
                 # make column complete blank
-                print(field)
                 df[field] = None
             # create fields list to order dataframe columns
             fields = []
@@ -2267,14 +2265,11 @@ class Custom_Utilities:
             if add_fields_on_left:
                 # create field order list
                 fields = mapping_fields_to_add + original_fields
-                print("left")
             # add fields on right of original fields
             else:
                 # create field order list
                 fields = original_fields + mapping_fields_to_add
-                print("right")
             # reorder fields in dataframe before returning
-            print(fields)
             df = df[fields]
             # return dataframe
             return df
