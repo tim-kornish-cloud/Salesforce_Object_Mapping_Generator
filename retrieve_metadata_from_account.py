@@ -17,6 +17,9 @@ import json
 from custom_db_utilities import  Salesforce_Utilities, Custom_Utilities
 from credentials import Credentials
 
+# show all columns in print output
+pd.set_option('display.max_columns', None)
+
 # create and instance of the custom salesforce utilities class used to interact with Salesforce
 SF_Utils = Salesforce_Utilities()
 # create and instance of the custom utilities class used to format and modify dataframe data
@@ -51,49 +54,19 @@ token = Cred.get_token(database, environment)
 # create a instance of simple_salesforce to query and perform operations against salesforce with
 sf = SF_Utils.login_to_salesForce(username, password, token)
 
+# set list of field metadata to keep
+fields_metadata_to_keep = ['label', 'length', 'name', 'type', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']
+# set object to grab metadata for
+object = "Account"
 
-# layout = sf.Account.describe_layout('001g8000005tj0eAAA')
-# print(layout)
+account_metadata_df = SF_Utils.retrieve_object_metadata(sf, object, fields_metadata_to_keep)
 
-# set up metadata api object to pull record metadata for
-mdapi = sf.mdapi
-
-#describe_response = mdapi.CustomObject.describe()
-
-#print(describe_response)
-#print(sf.Account.describe()['fields'])
-
-fields_dict = json.loads(json.dumps(sf.Account.describe()['fields']))
-
-fields_df = pd.DataFrame(fields_dict)
-
-mapping_df = fields_df[['label', 'length', 'name', 'type', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']]
-
-#fields_df.to_csv('account_fields.csv', index=False)
-mapping_df.to_csv('mapping_doc_account_fields.csv', index=False)
-
-#-----
-# perfection
-#-----
-# with open("account_fields.json", "w") as txt_file:
-#     # Option A: Save it as raw compressed JSON text
-#     json.dump(fields_dict, txt_file, indent=4 )
-
-
-#-------
-# updated no longer the best option, see above
-# best so far, ignore this for the above
-#-------
-#custom_object = mdapi.CustomObject.read("Account")
-# fields start on output line 419: 'fields': [
-#print(custom_object)
-
-
-
-
-# does not help
-#query = mdapi.ListMetadataQuery(type='CustomObject')
-#query_response = mdapi.list_metadata(query)
-
-
-#print(query_response)
+print(account_metadata_df.head())
+# fields_dict = json.loads(json.dumps(sf.Account.describe()['fields']))
+#
+# fields_df = pd.DataFrame(fields_dict)
+#
+# mapping_df = fields_df[['label', 'length', 'name', 'type', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']]
+#
+# #fields_df.to_csv('account_fields.csv', index=False)
+# mapping_df.to_csv('mapping_doc_account_fields.csv', index=False)
