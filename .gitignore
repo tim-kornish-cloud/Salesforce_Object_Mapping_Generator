@@ -2,7 +2,7 @@ credentials.properties
 credentials.py
 
 *.properties
-
+*.xlsx
 *.vsidx
 *.csv
 *.txt
