@@ -1980,7 +1980,8 @@ class Custom_Utilities:
             # log finished looping and now writing file out
             log.info("[saving file to output location]")
             # save the file
-            writer.save()
+            writer.close()
+
         # exception block - error writing list of dataframe to excel sheets
         except Exception as e:
             # log error when writing list of dataframe to excel sheets
@@ -2248,31 +2249,36 @@ class Custom_Utilities:
         # try except block
         try:
             # log message to console
-            log.info(f"[{message}]")
+            log.info(f"[Adding Mapping fields to dataframe]")
             # check to make sure list is not empty
             if not mapping_fields_to_add:
                 return df
             # retain order of original fields:
             original_fields = df.columns.tolist()
+            print(original_fields)
             # loop through list of fields to add
             for field in mapping_fields_to_add:
                 # make column complete blank
+                print(field)
                 df[field] = None
             # create fields list to order dataframe columns
             fields = []
             # check if to add blank fields on left
             if add_fields_on_left:
                 # create field order list
-                fields = original_fields.extend(mapping_fields_to_add)
+                fields = mapping_fields_to_add + original_fields
+                print("left")
             # add fields on right of original fields
             else:
                 # create field order list
-                fields = mapping_fields_to_add.extend(original_fields)
+                fields = original_fields + mapping_fields_to_add
+                print("right")
             # reorder fields in dataframe before returning
+            print(fields)
             df = df[fields]
             # return dataframe
             return df
         # exception block - error returning a datetime string of now
         except Exception as e:
             # log error when returning a datetime string of now
-            log.exception(f"[Error logging message...{e}]")
+            log.exception(f"[Error adding new fields to dataframe...{e}]")
