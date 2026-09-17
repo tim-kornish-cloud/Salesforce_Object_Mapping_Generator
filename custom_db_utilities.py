@@ -426,12 +426,10 @@ class Salesforce_Utilities:
                 return fields_df
             return fields_df[field_metadata_to_keep]
 
-
         # exception block - error logging into salesforce
         except Exception as e:
             # log error when logging into salesforce
             log.exception(f"[Error retrieving metadata for object : {object}...{e}]")
-
 
 class MSSQL_Utilities:
     def __init__(self):
@@ -2231,6 +2229,49 @@ class Custom_Utilities:
         try:
             # log message to console
             log.info(f"[{message}]")
+        # exception block - error returning a datetime string of now
+        except Exception as e:
+            # log error when returning a datetime string of now
+            log.exception(f"[Error logging message...{e}]")
+
+    def add_mapping_fields(self, df, mapping_fields_to_add, add_fields_on_left = True):
+        """
+        Description: add fields to a dataframe to generate a mapping document
+        Parameters:
+
+        df                      - DataFrame, original df to add new mapping fields with blank columns to
+        mapping_fields_to_add   - list, list of fields to add
+        add_fields_on_left      - boolean, default = true, add fields on right if false
+
+        return df
+        """
+        # try except block
+        try:
+            # log message to console
+            log.info(f"[{message}]")
+            # check to make sure list is not empty
+            if not mapping_fields_to_add:
+                return df
+            # retain order of original fields:
+            original_fields = df.columns.tolist()
+            # loop through list of fields to add
+            for field in mapping_fields_to_add:
+                # make column complete blank
+                df[field] = None
+            # create fields list to order dataframe columns
+            fields = []
+            # check if to add blank fields on left
+            if add_fields_on_left:
+                # create field order list
+                fields = original_fields.extend(mapping_fields_to_add)
+            # add fields on right of original fields
+            else:
+                # create field order list
+                fields = mapping_fields_to_add.extend(original_fields)
+            # reorder fields in dataframe before returning
+            df = df[fields]
+            # return dataframe
+            return df
         # exception block - error returning a datetime string of now
         except Exception as e:
             # log error when returning a datetime string of now
