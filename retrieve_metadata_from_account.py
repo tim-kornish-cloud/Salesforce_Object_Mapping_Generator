@@ -37,13 +37,6 @@ database = "Salesforce"
 # set up directory pathway to load csv data and output fallout and success results to
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-# set up fallout ans success path to save files to
-# success file path
-success_file = dir_path + "\\Output\\INSERT\\SUCCESS_Insert_" + environment + "_" + database + ".csv"
-# fallout file path
-fallout_file = dir_path + "\\Output\\INSERT\\FALLOUT_Insert_" + environment + "_" + database + ".csv"
-
-
 # get username from credentials
 username = Cred.get_username(database, environment)
 # get password from credentials
@@ -55,18 +48,39 @@ token = Cred.get_token(database, environment)
 sf = SF_Utils.login_to_salesForce(username, password, token)
 
 # set list of field metadata to keep
-fields_metadata_to_keep = ['label', 'length', 'name', 'type', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']
+fields_metadata_to_keep = ['name', 'label', 'type', 'length', 'precision', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']
 # set object to grab metadata for
 object = "Account"
 
+# retrieve metadata on account and load into pandas dataframe
 account_metadata_df = SF_Utils.retrieve_object_metadata(sf, object, fields_metadata_to_keep)
 
-print(account_metadata_df.head())
-# fields_dict = json.loads(json.dumps(sf.Account.describe()['fields']))
-#
-# fields_df = pd.DataFrame(fields_dict)
-#
-# mapping_df = fields_df[['label', 'length', 'name', 'type', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']]
-#
-# #fields_df.to_csv('account_fields.csv', index=False)
-# mapping_df.to_csv('mapping_doc_account_fields.csv', index=False)
+# rename columns to use target as prefix
+account_metadata_df.rename(columns = {'name' : 'Target Field API name',
+                                      'label' : 'Target Field Lable',
+                                      'type' : 'Target Field Type',
+                                      'length' : 'Target Field Length',
+                                      'precision' : 'Target Field Precision',
+                                      'unique' : 'Target Field is Unique',
+                                      'nillable' : 'Target Field is nillable',
+                                      'picklistValues' : 'Target Field Picklist Values',
+                                      'custom' : 'Target Field is custom',
+                                      'calculated' : 'Target Field is Calculated'}, inplace = True)
+
+# create list of fields to add to beginning of mapping document
+source_fields_to_add = ['Source Object', 'Source Field', 'Source Field Data Type', 'Source Field Description', 'Transformation Logic', 'Map Field', 'Target Object']
+
+# add mapping fields to metadata fields and return new df
+account_mapping_df = Utils.add_mapping_fields(account_metadata_df, source_fields_to_add, True)
+
+account_mapping_df['Target Object'] = object
+
+# create list of all dataframes to add to excel file
+dfs = [account_mapping_df]
+# mapping document file name
+file_name = "Mapping_Document.xlsx"
+# name of each sheet in mapping document that coordinates to each dataframe in dfs
+sheet_names = ['Account']
+# output dataframes in excel file
+Utils.write_df_to_excel(dfs, file_name, sheet_names)
+#print(account_mapping_df.head())
