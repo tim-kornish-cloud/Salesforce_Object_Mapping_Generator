@@ -2252,6 +2252,7 @@ class Custom_Utilities:
             log.info(f"[Adding Mapping fields to dataframe]")
             # check to make sure list is not empty
             if not mapping_fields_to_add:
+                # if no new fields to add, just return the orignial dataframe, raising an error would also suffice, but not needed now
                 return df
             # retain order of original fields:
             original_fields = df.columns.tolist()
