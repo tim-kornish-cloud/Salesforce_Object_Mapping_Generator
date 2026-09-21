@@ -75,7 +75,7 @@ sf = SF_Utils.login_to_salesForce(username, password, token)
 fields_metadata_to_keep = ['name', 'label', 'type', 'length', 'precision', 'unique', 'nillable', 'picklistValues', 'custom', 'calculated']
 
 # create list of source system columns to add to beginning of mapping document
-source_columns_to_add = ['Source Object', 'Source Field', 'Source Field Data Type', 'Source Field Description', 'Transformation Logic', 'Map Field', 'Target Object']
+source_columns_to_add = ['Source DB', 'Source Object', 'Source Field', 'Source Field Data Type', 'Source Field Description', 'Transformation Logic', 'Map Field', 'Target Object']
 
 # target field renaming dictionary
 target_column_rename_dict = {'name' : 'Target Field API name',
