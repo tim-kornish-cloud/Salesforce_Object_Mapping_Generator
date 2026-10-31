@@ -2010,12 +2010,11 @@ class Custom_Utilities:
                 # log to console what sheet is being written
                 log.info(f"[writing sheet to excel file: {str(sheet_names[index])}]")
                 # write the individual dataframe to it's associated sheet
-                df.to_excel(writer, sheet_names[index], index = False)
+                df.to_excel(writer, sheet_name = sheet_names[index], index = False)
             # log finished looping and now writing file out
             log.info("[saving file to output location]")
             # save the file
             writer.close()
-
         # exception block - error writing list of dataframe to excel sheets
         except Exception as e:
             # log error when writing list of dataframe to excel sheets
