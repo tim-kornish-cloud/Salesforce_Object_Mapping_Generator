@@ -28,3 +28,4 @@ credentials.py
 *.TMP
 *.backup
 *.bin
+/Keys/*
